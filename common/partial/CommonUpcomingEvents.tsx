@@ -8,6 +8,7 @@ import Card, {
 	CardHeader,
 	CardLabel,
 	CardTitle,
+	CardSubTitle,
 } from '../../components/bootstrap/Card';
 import Button from '../../components/bootstrap/Button';
 import { priceFormat } from '../../helpers/helpers';
@@ -22,6 +23,12 @@ import OffCanvas, {
 	OffCanvasHeader,
 	OffCanvasTitle,
 } from '../../components/bootstrap/OffCanvas';
+import Modal, {
+	ModalBody,
+	ModalFooter,
+	ModalHeader,
+	ModalTitle,
+} from '@call-components/bootstrap/Modal';
 import FormGroup from '../../components/bootstrap/forms/FormGroup';
 import Input from '../../components/bootstrap/forms/Input';
 import Textarea from '../../components/bootstrap/forms/Textarea';
@@ -34,12 +41,25 @@ import Avatar from '../../components/Avatar';
 import PaginationButtons, { dataPagination, PER_COUNT } from '../../components/PaginationButtons';
 import useSortableData from '../../hooks/useSortableData';
 import useDarkMode from '../../hooks/useDarkMode';
+import Select from '@call-components/bootstrap/forms/Select';
 
 interface ICommonUpcomingEventsProps {
 	isFluid?: boolean;
 }
 const CommonUpcomingEvents: FC<ICommonUpcomingEventsProps> = ({ isFluid }) => {
 	const { themeStatus, darkModeStatus } = useDarkMode();
+
+	const SELECT_OPTIONS = [
+		{ value: 1, text: 'One' },
+		{ value: 2, text: 'Two' },
+		{ value: 3, text: 'Three' },
+		{ value: 4, text: 'Four' },
+		{ value: 5, text: 'Five' },
+		{ value: 6, text: 'Six' },
+	];
+
+	const [headerCloseStatus, setHeaderCloseStatus] = useState(true);
+	const [state, setState] = useState(false);
 
 	// BEGIN :: Upcoming Events
 	const [upcomingEventsInfoOffcanvas, setUpcomingEventsInfoOffcanvas] = useState(false);
@@ -51,6 +71,8 @@ const CommonUpcomingEvents: FC<ICommonUpcomingEventsProps> = ({ isFluid }) => {
 	const handleUpcomingEdit = () => {
 		setUpcomingEventsEditOffcanvas(!upcomingEventsEditOffcanvas);
 	};
+
+	const [addLahanModal, setAddLahanModal] = useState(false);
 	// END :: Upcoming Events
 
 	const formik = useFormik({
@@ -85,14 +107,13 @@ const CommonUpcomingEvents: FC<ICommonUpcomingEventsProps> = ({ isFluid }) => {
 					</CardLabel>
 					<CardActions>
 						<Button
-							color='info'
-							icon='CloudDownload'
+							color='primary'
+							icon='Add'
 							isLight
-							tag='a'
-							to='/somefile.txt'
-							target='_blank'
-							download>
-							Export
+							onClick={() => {
+								setAddLahanModal(true);
+							}}>
+							Tambah Lahan
 						</Button>
 					</CardActions>
 				</CardHeader>
@@ -238,6 +259,175 @@ const CommonUpcomingEvents: FC<ICommonUpcomingEventsProps> = ({ isFluid }) => {
 				/>
 			</Card>
 
+			{/* Modal Add Lahan */}
+			<Modal
+				isOpen={addLahanModal}
+				setIsOpen={setAddLahanModal}
+				titleId='exampleModalLabel'
+				// isStaticBackdrop={staticBackdropStatus}
+				isScrollable={true}
+				isCentered={true}
+				size='xl'
+				fullScreen='xl'
+				isAnimation={false}>
+				<ModalHeader>
+					<ModalTitle id='exampleModalLabel' tag='h2' className='m-3'>
+						Tambah Data Lahan
+					</ModalTitle>
+				</ModalHeader>
+				<ModalBody>
+					<div className='row'>
+						<form>
+							<div className='col-lg-6'>
+								<div className='col-lg-12'>
+									<div className='row g-4'>
+										<div className='col-6'>
+											<FormGroup
+												id='exampleTypesPlaceholder--$'
+												label='Nama Tanah'
+												labelClassName='text-capitalize'>
+												<Input
+													// size='md'
+													type='text'
+													placeholder='Masukkan Nama Tanah'
+													aria-label='.form-control-lg example'
+												/>
+											</FormGroup>
+										</div>
+										<div className='col-6'>
+											<FormGroup
+												id='exampleTypesPlaceholder--$'
+												label='Tanggal Perolehan'
+												labelClassName='text-capitalize'>
+												<Input
+													// size='md'
+													type='date'
+													placeholder='Tanggal Perolehan Lahan'
+													aria-label='.form-control-lg example'
+												/>
+											</FormGroup>
+										</div>
+									</div>
+
+									<div className='row g-4 mt-2'>
+										<div className='col-6'>
+											<FormGroup
+												id='exampleTypesPlaceholder--'
+												label='Nama Tuan Tanah'
+												labelClassName='text-capitalize'>
+												<Input
+													// size='md'
+													type='text'
+													placeholder='Masukkan Nama Tuan Tanah'
+													aria-label='.form-control-lg example'
+												/>
+											</FormGroup>
+										</div>
+										<div className='col-6'>
+											<FormGroup
+												id='exampleTypesPlaceholder--$'
+												label='No. Hp Tuan Tanah'
+												labelClassName='text-capitalize'>
+												<Input
+													// size='md'
+													type='tel'
+													placeholder='+1 (999) 999-9999'
+													autoComplete='tel'
+													mask='+1 (999) 999-9999'
+												/>
+											</FormGroup>
+										</div>
+									</div>
+
+									<div className='row g-4 mt-2'>
+										<div className='col-6'>
+											<FormGroup
+												id='exampleTypesPlaceholder--'
+												label='Luas Area'
+												labelClassName='text-capitalize'>
+												<Input
+													// size='md'
+													type='number'
+													placeholder='Luas Area Tanah'
+													aria-label='.form-control-lg example'
+												/>
+											</FormGroup>
+										</div>
+										<div className='col-6'>
+											<FormGroup
+												id='exampleTypesPlaceholder--$'
+												label='Harga per m^2'
+												labelClassName='text-capitalize'>
+												<Input
+													// size='md'
+													type='number'
+													placeholder='Harga tanah per m^2'
+												/>
+											</FormGroup>
+										</div>
+									</div>
+
+									<div className='row g-4 mt-2'>
+										<div className='col'>
+											<FormGroup id='exampleSizeTextarea' label='Catatan'>
+												<Textarea placeholder='Catatan mengenai lahan' />
+											</FormGroup>
+										</div>
+										{/* <div className='col-6'>
+											<FormGroup
+												id='exampleTypesPlaceholder--$'
+												label='Jenis Pembayaran'
+												labelClassName='text-capitalize'>
+												<Select
+													size='md'
+													ariaLabel='Default select example'
+													placeholder='Open this select menu'
+													// onChange={formikOneWay.handleChange}
+													// value={formikOneWay.values.exampleSelectOneWay}
+													list={SELECT_OPTIONS}
+												/>
+											</FormGroup>
+										</div> */}
+									</div>
+								</div>
+							</div>
+							<div className='col-lg-6'>
+								<div className='row g-4'>
+									<div className='col'>
+										<FormGroup
+											id='exampleTypesPlaceholder--$'
+											label='Jenis Pembayaran'
+											labelClassName='text-capitalize'>
+											<Select
+												// size='md'
+												ariaLabel='Default select example'
+												placeholder='Open this select menu'
+												// onChange={formikOneWay.handleChange}
+												// value={formikOneWay.values.exampleSelectOneWay}
+												list={SELECT_OPTIONS}
+											/>
+										</FormGroup>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</ModalBody>
+				<ModalFooter>
+					<Button
+						color='info'
+						isOutline
+						className='border-0'
+						onClick={() => setAddLahanModal(false)}>
+						Close
+					</Button>
+					<Button color='info' icon='Save'>
+						Tambah Lahan
+					</Button>
+				</ModalFooter>
+			</Modal>
+
+			{/* Canvas Info Lahan */}
 			<OffCanvas
 				setOpen={setUpcomingEventsInfoOffcanvas}
 				isOpen={upcomingEventsInfoOffcanvas}
@@ -285,6 +475,7 @@ const CommonUpcomingEvents: FC<ICommonUpcomingEventsProps> = ({ isFluid }) => {
 				</OffCanvasBody>
 			</OffCanvas>
 
+			{/* Canvas Edit Lahan */}
 			<OffCanvas
 				setOpen={setUpcomingEventsEditOffcanvas}
 				isOpen={upcomingEventsEditOffcanvas}
@@ -383,7 +574,7 @@ const CommonUpcomingEvents: FC<ICommonUpcomingEventsProps> = ({ isFluid }) => {
 														desc='Check this checkbox if you want your customer to receive an email about the scheduled appointment'>
 														<Icon
 															icon='Help'
-															size='lg'
+															md
 															className='ms-1 cursor-help'
 														/>
 													</Popovers>
