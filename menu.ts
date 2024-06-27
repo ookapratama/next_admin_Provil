@@ -998,7 +998,7 @@ export const productsMenu = {
 export const adminMenu = {
 	lahan: {
 		id: 'lahan',
-		text: 'Menu Lahan',
+		text: 'Data Lahan',
 		path: '/admin/lahan',
 		icon: 'Dashboard',
 		subMenu: null,

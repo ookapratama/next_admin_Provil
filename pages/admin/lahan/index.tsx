@@ -6,19 +6,19 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import dayjs from 'dayjs';
 import useDarkMode from '@call-hooks/useDarkMode';
 import PageWrapper from '@call-layout/PageWrapper/PageWrapper';
-import { demoPagesMenu } from '@call-root-lib/menu';
+import { adminMenu } from '@call-root-lib/menu';
 import SubHeader, { SubHeaderLeft, SubHeaderRight } from '@call-layout/SubHeader/SubHeader';
 import Icon from '@call-components/icon/Icon';
 import Button from '@call-components/bootstrap/Button';
 import Page from '@call-layout/Page/Page';
-import CommonUpcomingEvents from '@call-common/partial/CommonUpcomingEvents';
+import CommonLahan from '@call-common/partial/CommonLahan';
 
 const Index: NextPage = () => {
 	const { themeStatus } = useDarkMode();
 	return (
 		<PageWrapper>
 			<Head>
-				<title>{demoPagesMenu.appointment.subMenu.appointmentList.text}</title>
+				<title>{adminMenu.lahan.text}</title>
 			</Head>
 			<SubHeader>
 				<SubHeaderLeft>
@@ -39,7 +39,7 @@ const Index: NextPage = () => {
 			<Page container='fluid'>
 				<div className='row h-100'>
 					<div className='col-12'>
-						<CommonUpcomingEvents isFluid />
+						<CommonLahan isFluid />
 					</div>
 				</div>
 			</Page>
