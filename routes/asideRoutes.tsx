@@ -9,7 +9,7 @@ const asides = [
 	{ path: demoPagesMenu.login.path, element: null, exact: true },
 	{ path: demoPagesMenu.signUp.path, element: null, exact: true },
 	{ path: pageLayoutTypesPagesMenu.blank.path, element: null, exact: true },
-	{ path: adminMenu.lahan.path, element: null, exact: true },
+	{ path: adminMenu.projects.path, element: null, exact: true },
 	// { path: '/*', element: <DefaultAside />, exact: true },
 	{ path: '/*', element: <MenuAside />, exact: true },
 ];

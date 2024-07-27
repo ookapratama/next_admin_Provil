@@ -996,19 +996,49 @@ export const productsMenu = {
 };
 
 export const adminMenu = {
-	lahan: {
-		id: 'lahan',
-		text: 'Data Lahan',
-		path: '/admin/lahan',
+
+	projects: {
+		id: 'projects',
+		text: 'Projects',
+		path: '/admin',
 		icon: 'Dashboard',
-		subMenu: null,
+		subMenu : {
+			lahan: {
+				id: 'lahan',
+				text: 'Data Lahan',
+				path: '/admin/lahan',
+				icon: 'Dashboard',
+				subMenu: null,
+			},
+			rab: {
+				id: 'rab',
+				text: 'Data RAB & RAP',
+				path: '/admin/rab',
+				icon: 'AutoStories',
+				subMenu: null,
+			},
+		}
 	},
-	// dashboardProject: {
-	// 	id: 'dashboardProject',
-	// 	text: 'Dashboard Projects',
-	// 	path: 'project-management/list',
-	// 	icon: 'AutoStories',
-	// 	notification: true,
-	// 	subMenu: null,
-	// },
+	marketing: {
+		id: 'marketing',
+		text: 'Marketing',
+		path: '/admin/marketing',
+		icon: 'Dashboard',
+		subMenu : {
+			cluster: {
+				id: 'cluster',
+				text: 'Cluster / Perumahan',
+				path: '/admin',
+				icon: 'Dashboard',
+				subMenu: null,
+			},
+			kavling: {
+				id: 'kavling',
+				text: 'Kavling',
+				path: '/admin',
+				icon: 'AutoStories',
+				subMenu: null,
+			},
+		}
+	},
 };
