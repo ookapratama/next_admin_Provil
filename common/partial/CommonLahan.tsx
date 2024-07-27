@@ -43,6 +43,7 @@ import useSortableData from '../../hooks/useSortableData';
 import useDarkMode from '../../hooks/useDarkMode';
 import Select from '@call-components/bootstrap/forms/Select';
 import TipeBayar from '@call-components/lahan/TipeBayar';
+import Option from '@call-components/bootstrap/Option';
 
 interface IDataLahanProps {
 	isFluid?: boolean;
@@ -50,9 +51,13 @@ interface IDataLahanProps {
 const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 	const { themeStatus, darkModeStatus } = useDarkMode();
 
+	// data form
+	const [vCatatan, setVcatatan] = useState('tes');
+	console.log(vCatatan);
+
 	const SELECT_OPTIONS_CATATAN = [
-		{ value: 1, text: 'Pembelian Laham Baru (Belum dicatat pada Persediaan Tanah' },
-		{ value: 2, text: 'Sebelumnya sudah dibeli (Sudah dicatat Persediaan Tanah' },
+		{ value: 'Belum', text: 'Pembelian Laham Baru (Belum dicatat pada Persediaan Tanah' },
+		{ value: 'Sudah', text: 'Sebelumnya sudah dibeli (Sudah dicatat Persediaan Tanah' },
 	];
 
 	const SELECT_OPTIONS_CLUSTER = [
@@ -72,11 +77,9 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 	const handleCatatOption = () => {};
 
 	// BEGIN :: Upcoming Events
-	const [upcomingEventsInfoOffcanvas, setUpcomingEventsInfoOffcanvas] = useState(false);
-
-	const [upcomingEventsEditOffcanvas, setUpcomingEventsEditOffcanvas] = useState(false);
-	const handleUpcomingEdit = () => {
-		setUpcomingEventsEditOffcanvas(!upcomingEventsEditOffcanvas);
+	const [editModalLahan, setEditModalLahan] = useState(false);
+	const handleEditLahan = () => {
+		setEditModalLahan(!editModalLahan);
 	};
 
 	const [modalHapusLahan, setModalHapusLahan] = useState(false);
@@ -85,6 +88,9 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 	};
 
 	const [addLahanModal, setAddLahanModal] = useState(false);
+	const handleChangeCatatan = (e) => {
+		setVcatatan(e.target.value);
+	};
 	// END :: Upcoming Events
 
 	const formik = useFormik({
@@ -92,6 +98,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 			values: Values,
 			formikHelpers: FormikHelpers<Values>,
 		): void | Promise<any> {
+			console.log(values);
 			return undefined;
 		},
 		initialValues: {
@@ -161,22 +168,9 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 									<td>{item.id}</td>
 									<td>
 										<div className='d-flex align-items-center'>
-											<span
-												className={classNames(
-													'badge',
-													'border border-2',
-													[`border-${themeStatus}`],
-													'rounded-circle',
-													'bg-success',
-													'p-2 me-2',
-												)}>
-												<span className='visually-hidden'>
-													{item.status.name}
-												</span>
-											</span>
 											<span className='text-nowrap'>
 												{dayjs(`${item.date} ${item.time}`).format(
-													'MMM Do YYYY, h:mm a',
+													'D-MMMM-YYYY',
 												)}
 											</span>
 										</div>
@@ -234,7 +228,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 													'mx-3',
 												)}
 												icon='Edit'
-												onClick={handleUpcomingEdit}>
+												onClick={handleEditLahan}>
 												Edit
 											</Button>
 
@@ -390,11 +384,18 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 										<Select
 											// size='md'
 											ariaLabel='Default select example'
-											placeholder='-- Pilih --'
-											// onChange={formikOneWay.handleChange}
-											// value={formikOneWay.values.exampleSelectOneWay}
+											placeholder='-- Pilih Catatan --'
+											// onChange={(v) => setVcatatan(v)}
+											// value={vCatatan}
 											list={SELECT_OPTIONS_CATATAN}
 										/>
+										{/* <Option value='Belum'>
+											Pembelian Laham Baru (Belum dicatat pada Persediaan
+											Tanah)
+										</Option>
+										<Option value='Sudah'>
+											Sebelumnya sudah dibeli (Sudah dicatat Persediaan Tanah)
+										</Option> */}
 									</FormGroup>
 								</div>
 								<div className='row g-4 mt-2'>
@@ -418,70 +419,28 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 				</ModalFooter>
 			</Modal>
 
-			{/* Canvas Info Lahan */}
-			<OffCanvas
-				setOpen={setUpcomingEventsInfoOffcanvas}
-				isOpen={upcomingEventsInfoOffcanvas}
-				titleId='upcomingDetails'
-				placement='bottom'>
-				<OffCanvasHeader setOpen={setUpcomingEventsInfoOffcanvas}>
-					<OffCanvasTitle id='upcomingDetails'>Customer: Alison Berry</OffCanvasTitle>
-				</OffCanvasHeader>
-				<OffCanvasBody>
-					<div className='row g-4'>
-						<div className='col-lg-6'>
-							<FormGroup
-								id='dateInfo'
-								name='date'
-								label='Date/Time'
-								isColForLabel
-								labelClassName='col-sm-2 text-capitalize'
-								childWrapperClassName='col-sm-10'>
-								<Input
-									value={dayjs(
-										// @ts-ignore
-										`${data.find((e) => e.id === 1).date} ${
-											// @ts-ignore
-											data.find((e) => e.id === 1).time
-										}`,
-									).format('MMM Do YYYY, h:mm a')}
-									readOnly
-									disabled
-								/>
-							</FormGroup>
-						</div>
-						<div className='w-100' />
-						<div className='col-lg-6'>
-							<FormGroup
-								id='noteInfo'
-								name='note'
-								label='Note'
-								isColForLabel
-								labelClassName='col-sm-2 text-capitalize'
-								childWrapperClassName='col-sm-10'>
-								<Textarea value={formik.values.note} readOnly disabled />
-							</FormGroup>
-						</div>
-					</div>
-				</OffCanvasBody>
-			</OffCanvas>
-
-			{/* Canvas Edit Lahan */}
-			<OffCanvas
-				setOpen={setUpcomingEventsEditOffcanvas}
-				isOpen={upcomingEventsEditOffcanvas}
-				titleId='upcomingEdit'
-				isBodyScroll
-				placement='end'>
-				<OffCanvasHeader setOpen={setUpcomingEventsEditOffcanvas}>
-					<OffCanvasTitle id='upcomingEdit'>Edit Data Lahan</OffCanvasTitle>
-				</OffCanvasHeader>
-				<OffCanvasBody>
+			{/* Modal Edit Lahan */}
+			<Modal
+				isOpen={editModalLahan}
+				setIsOpen={setEditModalLahan}
+				titleId='exampleModalLabel'
+				// isStaticBackdrop={staticBackdropStatus}
+				isScrollable={true}
+				isCentered={true}
+				size='xl'
+				fullScreen='xl'
+				isAnimation={false}>
+				<ModalHeader>
+					<ModalTitle id='exampleModalLabel' tag='h2' className='m-3'>
+						Edit Data Lahan
+					</ModalTitle>
+				</ModalHeader>
+				<ModalBody>
 					<form>
 						<div className='row'>
-							<div className='col-lg'>
+							<div className='col-lg-6'>
 								<div className='row g-4'>
-									<div className='col'>
+									<div className='col-6'>
 										<FormGroup
 											id='exampleTypesPlaceholder--$'
 											label='Nama Tanah'
@@ -494,10 +453,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 											/>
 										</FormGroup>
 									</div>
-								</div>
-
-								<div className='row g-4 mt-2'>
-									<div className='col'>
+									<div className='col-6'>
 										<FormGroup
 											id='exampleTypesPlaceholder--$'
 											label='Untuk Cluster/Proyek'
@@ -515,7 +471,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 								</div>
 
 								<div className='row g-4 mt-2'>
-									<div className='col'>
+									<div className='col-6'>
 										<FormGroup
 											id='exampleTypesPlaceholder--$'
 											label='Tanggal Perolehan'
@@ -528,10 +484,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 											/>
 										</FormGroup>
 									</div>
-								</div>
-
-								<div className='row g-4 mt-2'>
-									<div className='col'>
+									<div className='col-6'>
 										<FormGroup
 											id='exampleTypesPlaceholder--$'
 											label='No. Hp Tuan Tanah'
@@ -548,7 +501,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 								</div>
 
 								<div className='row g-4 mt-2'>
-									<div className='col'>
+									<div className='col-6'>
 										<FormGroup
 											id='exampleTypesPlaceholder--'
 											label='Luas Area'
@@ -561,10 +514,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 											/>
 										</FormGroup>
 									</div>
-								</div>
-
-								<div className='row g-4 mt-2'>
-									<div className='col'>
+									<div className='col-6'>
 										<FormGroup
 											id='exampleTypesPlaceholder--$'
 											label='Harga per m^2'
@@ -579,6 +529,13 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 								</div>
 
 								<div className='row g-4 mt-2'>
+									<FormGroup id='exampleSizeTextarea' label='Catatan'>
+										<Textarea placeholder='Catatan mengenai lahan' />
+									</FormGroup>
+								</div>
+							</div>
+							<div className='col-lg-6'>
+								<div className='row g-4'>
 									<FormGroup
 										id='exampleTypesPlaceholder--$'
 										label='Dicatat sebagai :'
@@ -586,39 +543,39 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 										<Select
 											// size='md'
 											ariaLabel='Default select example'
-											placeholder='-- Pilih --'
-											// onChange={formikOneWay.handleChange}
+											placeholder='-- Pilih Catatan --'
+											onChange={handleChangeCatatan}
 											// value={formikOneWay.values.exampleSelectOneWay}
-											list={SELECT_OPTIONS_CATATAN}
 										/>
+										<Option value={'Belum'}>
+											Pembelian Laham Baru (Belum dicatat pada Persediaan
+											Tanah)
+										</Option>
+										<Option value={'Sudah'}>
+											Sebelumnya sudah dibeli (Sudah dicatat Persediaan Tanah)
+										</Option>
 									</FormGroup>
-
-									{/* tipe bayar lahan */}
-									<TipeBayar />
 								</div>
-
 								<div className='row g-4 mt-2'>
-									<div className='col'>
-										<FormGroup id='exampleSizeTextarea' label='Catatan'>
-											<Textarea placeholder='Catatan mengenai lahan' />
-										</FormGroup>
-									</div>
+									<TipeBayar />
 								</div>
 							</div>
 						</div>
 					</form>
-				</OffCanvasBody>
-				<div className='row m-0'>
-					<div className='col-12 p-3'>
-						<Button
-							color='info'
-							className='w-100'
-							onClick={() => setUpcomingEventsEditOffcanvas(false)}>
-							Save
-						</Button>
-					</div>
-				</div>
-			</OffCanvas>
+				</ModalBody>
+				<ModalFooter>
+					<Button
+						color='info'
+						isOutline
+						className='border-0'
+						onClick={() => setEditModalLahan(false)}>
+						Close
+					</Button>
+					<Button color='info' icon='Save'>
+						Tambah Lahan
+					</Button>
+				</ModalFooter>
+			</Modal>
 
 			{/* Modal Hapus Lahan */}
 			<Modal

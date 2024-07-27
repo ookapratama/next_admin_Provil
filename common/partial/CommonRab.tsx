@@ -25,16 +25,14 @@ import Modal, {
 } from '@call-components/bootstrap/Modal';
 import FormGroup from '../../components/bootstrap/forms/FormGroup';
 import Input from '../../components/bootstrap/forms/Input';
-import Textarea from '../../components/bootstrap/forms/Textarea';
 import data from '../data/dummyEventsData';
 import USERS from '../data/userDummyData';
 import PaginationButtons, { dataPagination, PER_COUNT } from '../../components/PaginationButtons';
 import useSortableData from '../../hooks/useSortableData';
 import useDarkMode from '../../hooks/useDarkMode';
 import Select from '@call-components/bootstrap/forms/Select';
-import TipeBayar from '@call-components/lahan/TipeBayar';
 import InputGroup, { InputGroupText } from '@call-components/bootstrap/forms/InputGroup';
-import CommonItem from '@call-common/partial/item/CommonItem'
+import CommonItem from '@call-common/partial/item/CommonItem';
 
 interface IDataLahanProps {
 	isFluid?: boolean;
@@ -62,7 +60,7 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 	const [catatTipe, setCatatTipe] = useState('');
 
 	// handle option catatan
-	const handleCatatOption = () => { };
+	const handleCatatOption = () => {};
 
 	// BEGIN :: Upcoming Events
 	const [upcomingEventsInfoOffcanvas, setUpcomingEventsInfoOffcanvas] = useState(false);
@@ -78,6 +76,11 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 	};
 
 	const [addRabModal, setRabModal] = useState(false);
+	const [editRabModal, setEditRabModal] = useState(false);
+	const handleEditRab = () => {
+		setEditRabModal(!upcomingEventsEditOffcanvas);
+	};
+
 	// END :: Upcoming Events
 
 	const formik = useFormik({
@@ -155,7 +158,7 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 									<td>
 										<div className='d-flex'>
 											<div className='flex-grow-1 ms-3 d-flex align-items-center text-nowrap'>
-												RAB 01 Lorem ipsum dolor sit amet consectetur 
+												RAB 01 Lorem ipsum dolor sit amet consectetur
 											</div>
 										</div>
 									</td>
@@ -190,15 +193,11 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 									</td>
 
 									<td>
-										<div className="text-nowrap">
-											200.000.000
-										</div>
+										<div className='text-nowrap'>200.000.000</div>
 									</td>
 
 									<td>
-										<div className="text-nowrap">
-											200.000.000
-										</div>
+										<div className='text-nowrap'>200.000.000</div>
 									</td>
 
 									<td>
@@ -215,7 +214,7 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 													'mx-3',
 												)}
 												icon='Edit'
-												onClick={handleUpcomingEdit}>
+												onClick={handleEditRab}>
 												Edit
 											</Button>
 
@@ -247,7 +246,7 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 				/>
 			</Card>
 
-			{/* Modal Add Lahan */}
+			{/* Modal Add RAB */}
 			<Modal
 				isOpen={addRabModal}
 				setIsOpen={setRabModal}
@@ -280,7 +279,6 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 									/>
 								</FormGroup>
 
-
 								<div className='row g-4 mt-2'>
 									<FormGroup
 										id='exampleTypesPlaceholder--$'
@@ -295,7 +293,6 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 											list={SELECT_OPTIONS_CLUSTER}
 										/>
 									</FormGroup>
-
 								</div>
 
 								<div className='row g-4 mt-2'>
@@ -313,7 +310,7 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 												// @ts-ignore
 												thousandSeparator
 												onChange={formik.handleChange}
-											// value={formik.values.examplePrice}
+												// value={formik.values.examplePrice}
 											/>
 											<InputGroupText>%</InputGroupText>
 										</InputGroup>
@@ -375,18 +372,16 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 							</div>
 						</div>
 
-						<div className="text-center ">
+						<div className='text-center '>
 							<ModalTitle id='exampleModalLabel' tag='h3' className=' mt-5'>
 								Item RAP & RAB
 							</ModalTitle>
 							Silahkan masukkan poin-poin RAP & RAB
 						</div>
 
-						<div className="row">
+						<div className='row'>
 							<CommonItem />
 						</div>
-						
-
 					</form>
 				</ModalBody>
 
@@ -404,207 +399,158 @@ const CommonRab: FC<IDataLahanProps> = ({ isFluid }) => {
 				</ModalFooter>
 			</Modal>
 
-			{/* Canvas Info Lahan */}
-			<OffCanvas
-				setOpen={setUpcomingEventsInfoOffcanvas}
-				isOpen={upcomingEventsInfoOffcanvas}
-				titleId='upcomingDetails'
-				placement='bottom'>
-				<OffCanvasHeader setOpen={setUpcomingEventsInfoOffcanvas}>
-					<OffCanvasTitle id='upcomingDetails'>Customer: Alison Berry</OffCanvasTitle>
-				</OffCanvasHeader>
-				<OffCanvasBody>
-					<div className='row g-4'>
-						<div className='col-lg-6'>
-							<FormGroup
-								id='dateInfo'
-								name='date'
-								label='Date/Time'
-								isColForLabel
-								labelClassName='col-sm-2 text-capitalize'
-								childWrapperClassName='col-sm-10'>
-								<Input
-									value={dayjs(
-										// @ts-ignore
-										`${data.find((e) => e.id === 1).date} ${
-										// @ts-ignore
-										data.find((e) => e.id === 1).time
-										}`,
-									).format('MMM Do YYYY, h:mm a')}
-									readOnly
-									disabled
-								/>
-							</FormGroup>
-						</div>
-						<div className='w-100' />
-						<div className='col-lg-6'>
-							<FormGroup
-								id='noteInfo'
-								name='note'
-								label='Note'
-								isColForLabel
-								labelClassName='col-sm-2 text-capitalize'
-								childWrapperClassName='col-sm-10'>
-								<Textarea value={formik.values.note} readOnly disabled />
-							</FormGroup>
-						</div>
-					</div>
-				</OffCanvasBody>
-			</OffCanvas>
-
-			{/* Canvas Edit Lahan */}
-			<OffCanvas
-				setOpen={setUpcomingEventsEditOffcanvas}
-				isOpen={upcomingEventsEditOffcanvas}
-				titleId='upcomingEdit'
-				isBodyScroll
-				placement='end'>
-				<OffCanvasHeader setOpen={setUpcomingEventsEditOffcanvas}>
-					<OffCanvasTitle id='upcomingEdit'>Edit Data Lahan</OffCanvasTitle>
-				</OffCanvasHeader>
-				<OffCanvasBody>
+			{/* Modal Edit RAB */}
+			<Modal
+				isOpen={editRabModal}
+				setIsOpen={setEditRabModal}
+				titleId='exampleModalLabel'
+				// isStaticBackdrop={staticBackdropStatus}
+				isScrollable={true}
+				isCentered={true}
+				size='xl'
+				fullScreen='xxl'
+				isAnimation={false}>
+				<ModalHeader>
+					<ModalTitle id='exampleModalLabel' tag='h2' className='m-3'>
+						Edit RAP & RAB
+					</ModalTitle>
+				</ModalHeader>
+				{/* Form */}
+				<ModalBody>
 					<form>
 						<div className='row'>
-							<div className='col-lg'>
-								<div className='row g-4'>
-									<div className='col'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Nama Tanah'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='text'
-												placeholder='Masukkan Nama Tanah'
-												aria-label='.form-control-lg example'
-											/>
-										</FormGroup>
-									</div>
-								</div>
-
-								<div className='row g-4 mt-2'>
-									<div className='col'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Untuk Cluster/Proyek'
-											labelClassName='text-capitalize'>
-											<Select
-												// size='md'
-												ariaLabel='Default select example'
-												placeholder='-- Pilih Perumahan --'
-												// onChange={formikOneWay.handleChange}
-												// value={formikOneWay.values.exampleSelectOneWay}
-												list={SELECT_OPTIONS_CLUSTER}
-											/>
-										</FormGroup>
-									</div>
-								</div>
-
-								<div className='row g-4 mt-2'>
-									<div className='col'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Tanggal Perolehan'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='date'
-												placeholder='Tanggal Perolehan Lahan'
-												aria-label='.form-control-lg example'
-											/>
-										</FormGroup>
-									</div>
-								</div>
-
-								<div className='row g-4 mt-2'>
-									<div className='col'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='No. Hp Tuan Tanah'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='tel'
-												placeholder='+1 (999) 999-9999'
-												autoComplete='tel'
-												mask='+1 (999) 999-9999'
-											/>
-										</FormGroup>
-									</div>
-								</div>
-
-								<div className='row g-4 mt-2'>
-									<div className='col'>
-										<FormGroup
-											id='exampleTypesPlaceholder--'
-											label='Luas Area'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='number'
-												placeholder='Luas Area Tanah'
-												aria-label='.form-control-lg example'
-											/>
-										</FormGroup>
-									</div>
-								</div>
-
-								<div className='row g-4 mt-2'>
-									<div className='col'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Harga per m^2'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='number'
-												placeholder='Harga tanah per m^2'
-											/>
-										</FormGroup>
-									</div>
-								</div>
+							<div className='col-lg-6'>
+								<FormGroup
+									id='exampleTypesPlaceholder--$'
+									label='Judul'
+									labelClassName='text-capitalize'>
+									<Input
+										// size='md'
+										type='text'
+										placeholder=''
+										aria-label='.form-control-lg example'
+									/>
+								</FormGroup>
 
 								<div className='row g-4 mt-2'>
 									<FormGroup
 										id='exampleTypesPlaceholder--$'
-										label='Dicatat sebagai :'
+										label='Perumahan / CLuster'
 										labelClassName='text-capitalize'>
 										<Select
 											// size='md'
 											ariaLabel='Default select example'
-											placeholder='-- Pilih --'
+											placeholder='-- Pilih Perumahan / Cluster --'
+											// onChange={formikOneWay.handleChange}
+											// value={formikOneWay.values.exampleSelectOneWay}
+											list={SELECT_OPTIONS_CLUSTER}
+										/>
+									</FormGroup>
+								</div>
+
+								<div className='row g-4 mt-2'>
+									<FormGroup
+										id='exampleTypesPlaceholder--'
+										label='Persentase Kenaikan Qty RAP ke RAB'
+										labelClassName='text-capitalize'>
+										<InputGroup>
+											{/* <InputGroupText>$</InputGroupText> */}
+											<Input
+												id='examplePrice'
+												// ariaLabel='Amount (to the nearest dollar)'
+												component='NumberFormat'
+												placeholder='Format persen'
+												// @ts-ignore
+												thousandSeparator
+												onChange={formik.handleChange}
+												// value={formik.values.examplePrice}
+											/>
+											<InputGroupText>%</InputGroupText>
+										</InputGroup>
+										{/* <InputGroup /> */}
+									</FormGroup>
+								</div>
+
+								{/* <div className='row g-4 mt-2'>
+									<FormGroup id='exampleSizeTextarea' label='Catatan'>
+										<Textarea placeholder='Catatan mengenai lahan' />
+									</FormGroup>
+								</div> */}
+							</div>
+							<div className='col-lg-6'>
+								<div className='row g-4'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Type Model '
+										labelClassName='text-capitalize'>
+										<Select
+											// size='md'
+											ariaLabel='Default select example'
+											placeholder='-- Pilih Type --'
 											// onChange={formikOneWay.handleChange}
 											// value={formikOneWay.values.exampleSelectOneWay}
 											list={SELECT_TYPE_MODEL}
 										/>
 									</FormGroup>
-
-									{/* tipe bayar lahan */}
-									<TipeBayar />
 								</div>
-
 								<div className='row g-4 mt-2'>
-									<div className='col'>
-										<FormGroup id='exampleSizeTextarea' label='Catatan'>
-											<Textarea placeholder='Catatan mengenai lahan' />
-										</FormGroup>
-									</div>
+									{/* <TipeBayar /> */}
+									<FormGroup
+										id='exampleTypesPlaceholder--'
+										label='Total RAP'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											readOnly
+											type='number'
+											placeholder='0'
+											aria-label='.form-control-lg example'
+										/>
+									</FormGroup>
+								</div>
+								<div className='row g-4 mt-2'>
+									<FormGroup
+										id='exampleTypesPlaceholder--'
+										label='Total RAB'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											readOnly
+											type='number'
+											placeholder='0'
+											aria-label='.form-control-lg example'
+										/>
+									</FormGroup>
 								</div>
 							</div>
 						</div>
+
+						<div className='text-center '>
+							<ModalTitle id='exampleModalLabel' tag='h3' className=' mt-5'>
+								Item RAP & RAB
+							</ModalTitle>
+							Silahkan masukkan poin-poin RAP & RAB
+						</div>
+
+						<div className='row'>
+							<CommonItem />
+						</div>
 					</form>
-				</OffCanvasBody>
-				<div className='row m-0'>
-					<div className='col-12 p-3'>
-						<Button
-							color='info'
-							className='w-100'
-							onClick={() => setUpcomingEventsEditOffcanvas(false)}>
-							Save
-						</Button>
-					</div>
-				</div>
-			</OffCanvas>
+				</ModalBody>
+
+				<ModalFooter>
+					<Button
+						color='info'
+						isOutline
+						className='border-0'
+						onClick={() => setEditRabModal(false)}>
+						Close
+					</Button>
+					<Button color='info' icon='Save'>
+						Simpan
+					</Button>
+				</ModalFooter>
+			</Modal>
 
 			{/* Modal Hapus RAB */}
 			<Modal
