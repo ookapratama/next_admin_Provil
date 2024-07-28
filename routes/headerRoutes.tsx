@@ -19,6 +19,7 @@ import ContentHeader from '../pages/admin/_layout/_headers/ContentHeader';
 import UtilitiesHeader from '../pages/admin/_layout/_headers/UtilitiesHeader';
 import IconHeader from '../pages/admin/_layout/_headers/IconHeader';
 import DefaultHeader from '../pages/admin/_layout/_headers/DefaultHeader';
+import AdminHeader from '@call-pages/admin/_layout/_headers/AdminHeader';
 
 const headers = [
 	{ path: pageLayoutTypesPagesMenu.pageLayout.subMenu.onlySubheader.path, element: null },
@@ -164,7 +165,8 @@ const headers = [
 	},
 	{
 		path: `/*`,
-		element: <DefaultHeader />,
+		// element: <DefaultHeader />,
+		element: <AdminHeader />,
 	},
 ];
 

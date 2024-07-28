@@ -1028,14 +1028,14 @@ export const adminMenu = {
 			cluster: {
 				id: 'cluster',
 				text: 'Cluster / Perumahan',
-				path: '/admin',
+				path: '/admin/cluster',
 				icon: 'Dashboard',
 				subMenu: null,
 			},
 			kavling: {
 				id: 'kavling',
 				text: 'Kavling',
-				path: '/admin',
+				path: '/admin/kavling',
 				icon: 'AutoStories',
 				subMenu: null,
 			},

@@ -48,7 +48,7 @@ import Option from '@call-components/bootstrap/Option';
 interface IDataLahanProps {
 	isFluid?: boolean;
 }
-const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
+const CommonCluster: FC<IDataLahanProps> = ({ isFluid }) => {
 	const { themeStatus, darkModeStatus } = useDarkMode();
 
 	// data form
@@ -77,17 +77,17 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 	const handleCatatOption = () => {};
 
 	// BEGIN :: Upcoming Events
-	const [editModalLahan, setEditModalLahan] = useState(false);
+	const [editClusterModal, setEditClusterModal] = useState(false);
 	const handleEditLahan = () => {
-		setEditModalLahan(!editModalLahan);
+		setEditClusterModal(!editClusterModal);
 	};
 
-	const [modalHapusLahan, setModalHapusLahan] = useState(false);
+	const [modalHapusCluster, setModalHapusCluster] = useState(false);
 	const handleModalHapus = () => {
-		setModalHapusLahan(!modalHapusLahan);
+		setModalHapusCluster(!modalHapusCluster);
 	};
 
-	const [addLahanModal, setAddLahanModal] = useState(false);
+	const [addClusterModal, setAddClusterModal] = useState(false);
 	const handleChangeCatatan = (e) => {
 		setVcatatan(e.target.value);
 	};
@@ -122,7 +122,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 			<Card stretch={isFluid}>
 				<CardHeader borderSize={1}>
 					<CardLabel icon='Alarm' iconColor='info'>
-						<CardTitle>Data Lahan</CardTitle>
+						<CardTitle>Data Cluster</CardTitle>
 					</CardLabel>
 					<CardActions>
 						<Button
@@ -130,9 +130,9 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 							icon='Add'
 							isLight
 							onClick={() => {
-								setAddLahanModal(true);
+								setAddClusterModal(true);
 							}}>
-							Tambah Lahan
+							Tambah Cluster
 						</Button>
 					</CardActions>
 				</CardHeader>
@@ -141,21 +141,11 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 						<thead>
 							<tr>
 								<th>No</th>
-								<th
-									onClick={() => requestSort('date')}
-									className='cursor-pointer text-decoration-underline'>
-									Tanggal{' '}
-									<Icon
-										size='lg'
-										className={getClassNamesFor('date')}
-										icon='FilterList'
-									/>
-								</th>
-								<th>Untuk Cluster/Proyek</th>
-								<th>Tuan Tanah</th>
-								<th>Luas Area (m2)</th>
-								<th>Harga per m2</th>
-								<th>Total</th>
+								<th>Nama</th>
+								<th>Kota</th>
+								<th>No. HP</th>
+								<th>Luas Tanah Total</th>
+								<th>Total Unit</th>
 								{/* <th>Status</th> */}
 								<td style={{ width: 60 }} />
 
@@ -167,53 +157,16 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 								<tr key={item.id}>
 									<td>{item.id}</td>
 									<td>
-										<div className='d-flex align-items-center'>
-											<span className='text-nowrap'>
-												{dayjs(`${item.date} ${item.time}`).format(
-													'D-MMMM-YYYY',
-												)}
-											</span>
+										<div className='flex-grow-1 d-flex align-items-center text-nowrap'>
+											Cluster pembangunan 1
 										</div>
 									</td>
+									<td>Kota Makassar</td>
 									<td>
-										<div className='d-flex'>
-											<div className='flex-grow-1 ms-3 d-flex align-items-center text-nowrap'>
-												Cluster pembangunan 1
-											</div>
-										</div>
+										<div>08123456789</div>
 									</td>
-									<td>
-										<div>Budi Santoso</div>
-									</td>
-									<td>400</td>
-									<td className='text-nowrap'>Rp. 200.000.000</td>
-									<td className='text-nowrap'>Rp. 1.000.000</td>
-									{/* <td>
-										<Dropdown>
-											<DropdownToggle hasIcon={false}>
-												<Button
-													isLink
-													color={item.status.color}
-													icon='Circle'
-													className='text-nowrap'>
-													{item.status.name}
-												</Button>
-											</DropdownToggle>
-											<DropdownMenu>
-												{Object.keys(EVENT_STATUS).map((key) => (
-													<DropdownItem key={key}>
-														<div>
-															<Icon
-																icon='Circle'
-																color={EVENT_STATUS[key].color}
-															/>
-															{EVENT_STATUS[key].name}
-														</div>
-													</DropdownItem>
-												))}
-											</DropdownMenu>
-										</Dropdown>
-									</td> */}
+									<td>12000.00</td>
+									<td className='text-center'>80</td>
 									<td>
 										<div className='d-flex flew-row'>
 											<Button
@@ -262,8 +215,8 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 
 			{/* Modal Add Lahan */}
 			<Modal
-				isOpen={addLahanModal}
-				setIsOpen={setAddLahanModal}
+				isOpen={addClusterModal}
+				setIsOpen={setAddClusterModal}
 				titleId='exampleModalLabel'
 				// isStaticBackdrop={staticBackdropStatus}
 				isScrollable={true}
@@ -273,7 +226,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 				isAnimation={false}>
 				<ModalHeader>
 					<ModalTitle id='exampleModalLabel' tag='h2' className='m-3'>
-						Tambah Data Lahan
+						Tambah Cluster
 					</ModalTitle>
 				</ModalHeader>
 				<ModalBody>
@@ -281,97 +234,57 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 						<div className='row'>
 							<div className='col-lg-6'>
 								<div className='row g-4'>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Nama Tanah'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='text'
-												placeholder='Masukkan Nama Tanah'
-												aria-label='.form-control-lg example'
-											/>
-										</FormGroup>
-									</div>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Untuk Cluster/Proyek'
-											labelClassName='text-capitalize'>
-											<Select
-												// size='md'
-												ariaLabel='Default select example'
-												placeholder='-- Pilih Perumahan --'
-												// onChange={formikOneWay.handleChange}
-												// value={formikOneWay.values.exampleSelectOneWay}
-												list={SELECT_OPTIONS_CLUSTER}
-											/>
-										</FormGroup>
-									</div>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Nama Cluster'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='text'
+											placeholder='Masukkan Nama Cluster'
+											aria-label='.form-control-lg example'
+										/>
+									</FormGroup>
 								</div>
 
-								<div className='row g-4 mt-2'>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Tanggal Perolehan'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='date'
-												placeholder='Tanggal Perolehan Lahan'
-												aria-label='.form-control-lg example'
-											/>
-										</FormGroup>
-									</div>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='No. Hp Tuan Tanah'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='tel'
-												placeholder='+1 (999) 999-9999'
-												autoComplete='tel'
-												mask='+1 (999) 999-9999'
-											/>
-										</FormGroup>
-									</div>
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='No. Hp'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='tel'
+											placeholder='+1 (999) 999-9999'
+											autoComplete='tel'
+											mask='+1 (999) 999-9999'
+										/>
+									</FormGroup>
 								</div>
 
-								<div className='row g-4 mt-2'>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--'
-											label='Luas Area'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='number'
-												placeholder='Luas Area Tanah'
-												aria-label='.form-control-lg example'
-											/>
-										</FormGroup>
-									</div>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Harga per m^2'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='number'
-												placeholder='Harga tanah per m^2'
-											/>
-										</FormGroup>
-									</div>
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Luas Tanah Total (m2)'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='number'
+											placeholder='Luas tanah total (m2)'
+										/>
+									</FormGroup>
 								</div>
 
-								<div className='row g-4 mt-2'>
-									<FormGroup id='exampleSizeTextarea' label='Catatan'>
-										<Textarea placeholder='Catatan mengenai lahan' />
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Total unit'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='number'
+											placeholder='total unit'
+										/>
 									</FormGroup>
 								</div>
 							</div>
@@ -379,20 +292,65 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 								<div className='row g-4'>
 									<FormGroup
 										id='exampleTypesPlaceholder--$'
-										label='Dicatat sebagai :'
+										label='Provinsi :'
 										labelClassName='text-capitalize'>
 										<Select
 											// size='md'
 											ariaLabel='Default select example'
-											placeholder='-- Pilih Catatan --'
+											placeholder='-- Pilih Provinsi --'
 											// onChange={(v) => setVcatatan(v)}
 											// value={vCatatan}
 											list={SELECT_OPTIONS_CATATAN}
 										/>
 									</FormGroup>
 								</div>
-								<div className='row g-4 mt-2'>
-									<TipeBayar />
+
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Kota :'
+										labelClassName='text-capitalize'>
+										<Select
+											// size='md'
+											ariaLabel='Default select example'
+											placeholder='-- Pilih Kota --'
+											// onChange={(v) => setVcatatan(v)}
+											// value={vCatatan}
+											list={SELECT_OPTIONS_CATATAN}
+										/>
+									</FormGroup>
+								</div>
+
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Kecamatan'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='text'
+											placeholder='kecamatan'
+										/>
+									</FormGroup>
+								</div>
+
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Kelurahan'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='text'
+											placeholder='kelurahan'
+										/>
+									</FormGroup>
+								</div>
+
+								<div className='row g-4 mt-1'>
+									<FormGroup id='exampleSizeTextarea' label='Alamat lengkap'>
+										<Textarea placeholder='alamat' />
+									</FormGroup>
 								</div>
 							</div>
 						</div>
@@ -403,19 +361,19 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 						color='info'
 						isOutline
 						className='border-0'
-						onClick={() => setAddLahanModal(false)}>
+						onClick={() => setAddClusterModal(false)}>
 						Close
 					</Button>
 					<Button color='info' icon='Save'>
-						Tambah Lahan
+						Tambah Cluster
 					</Button>
 				</ModalFooter>
 			</Modal>
 
 			{/* Modal Edit Lahan */}
 			<Modal
-				isOpen={editModalLahan}
-				setIsOpen={setEditModalLahan}
+				isOpen={editClusterModal}
+				setIsOpen={setEditClusterModal}
 				titleId='exampleModalLabel'
 				// isStaticBackdrop={staticBackdropStatus}
 				isScrollable={true}
@@ -425,7 +383,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 				isAnimation={false}>
 				<ModalHeader>
 					<ModalTitle id='exampleModalLabel' tag='h2' className='m-3'>
-						Edit Data Lahan
+						Edit Cluster
 					</ModalTitle>
 				</ModalHeader>
 				<ModalBody>
@@ -433,97 +391,57 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 						<div className='row'>
 							<div className='col-lg-6'>
 								<div className='row g-4'>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Nama Tanah'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='text'
-												placeholder='Masukkan Nama Tanah'
-												aria-label='.form-control-lg example'
-											/>
-										</FormGroup>
-									</div>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Untuk Cluster/Proyek'
-											labelClassName='text-capitalize'>
-											<Select
-												// size='md'
-												ariaLabel='Default select example'
-												placeholder='-- Pilih Perumahan --'
-												// onChange={formikOneWay.handleChange}
-												// value={formikOneWay.values.exampleSelectOneWay}
-												list={SELECT_OPTIONS_CLUSTER}
-											/>
-										</FormGroup>
-									</div>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Nama Cluster'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='text'
+											placeholder='Masukkan Nama Cluster'
+											aria-label='.form-control-lg example'
+										/>
+									</FormGroup>
 								</div>
 
-								<div className='row g-4 mt-2'>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Tanggal Perolehan'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='date'
-												placeholder='Tanggal Perolehan Lahan'
-												aria-label='.form-control-lg example'
-											/>
-										</FormGroup>
-									</div>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='No. Hp Tuan Tanah'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='tel'
-												placeholder='+1 (999) 999-9999'
-												autoComplete='tel'
-												mask='+1 (999) 999-9999'
-											/>
-										</FormGroup>
-									</div>
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='No. Hp'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='tel'
+											placeholder='+1 (999) 999-9999'
+											autoComplete='tel'
+											mask='+1 (999) 999-9999'
+										/>
+									</FormGroup>
 								</div>
 
-								<div className='row g-4 mt-2'>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--'
-											label='Luas Area'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='number'
-												placeholder='Luas Area Tanah'
-												aria-label='.form-control-lg example'
-											/>
-										</FormGroup>
-									</div>
-									<div className='col-6'>
-										<FormGroup
-											id='exampleTypesPlaceholder--$'
-											label='Harga per m^2'
-											labelClassName='text-capitalize'>
-											<Input
-												// size='md'
-												type='number'
-												placeholder='Harga tanah per m^2'
-											/>
-										</FormGroup>
-									</div>
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Luas Tanah Total (m2)'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='number'
+											placeholder='Luas tanah total (m2)'
+										/>
+									</FormGroup>
 								</div>
 
-								<div className='row g-4 mt-2'>
-									<FormGroup id='exampleSizeTextarea' label='Catatan'>
-										<Textarea placeholder='Catatan mengenai lahan' />
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Total unit'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='number'
+											placeholder='total unit'
+										/>
 									</FormGroup>
 								</div>
 							</div>
@@ -531,20 +449,65 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 								<div className='row g-4'>
 									<FormGroup
 										id='exampleTypesPlaceholder--$'
-										label='Dicatat sebagai :'
+										label='Provinsi :'
 										labelClassName='text-capitalize'>
 										<Select
 											// size='md'
 											ariaLabel='Default select example'
-											placeholder='-- Pilih Catatan --'
-											// onChange={handleChangeCatatan}
-											// value={formikOneWay.values.exampleSelectOneWay}
+											placeholder='-- Pilih Provinsi --'
+											// onChange={(v) => setVcatatan(v)}
+											// value={vCatatan}
 											list={SELECT_OPTIONS_CATATAN}
 										/>
 									</FormGroup>
 								</div>
-								<div className='row g-4 mt-2'>
-									<TipeBayar />
+
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Kota :'
+										labelClassName='text-capitalize'>
+										<Select
+											// size='md'
+											ariaLabel='Default select example'
+											placeholder='-- Pilih Kota --'
+											// onChange={(v) => setVcatatan(v)}
+											// value={vCatatan}
+											list={SELECT_OPTIONS_CATATAN}
+										/>
+									</FormGroup>
+								</div>
+
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Kecamatan'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='text'
+											placeholder='kecamatan'
+										/>
+									</FormGroup>
+								</div>
+
+								<div className='row g-4 mt-1'>
+									<FormGroup
+										id='exampleTypesPlaceholder--$'
+										label='Kelurahan'
+										labelClassName='text-capitalize'>
+										<Input
+											// size='md'
+											type='text'
+											placeholder='kelurahan'
+										/>
+									</FormGroup>
+								</div>
+
+								<div className='row g-4 mt-1'>
+									<FormGroup id='exampleSizeTextarea' label='Alamat lengkap'>
+										<Textarea placeholder='alamat' />
+									</FormGroup>
 								</div>
 							</div>
 						</div>
@@ -555,19 +518,19 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 						color='info'
 						isOutline
 						className='border-0'
-						onClick={() => setEditModalLahan(false)}>
+						onClick={() => setEditClusterModal(false)}>
 						Close
 					</Button>
 					<Button color='info' icon='Save'>
-						Update Lahan
+						Update Cluster
 					</Button>
 				</ModalFooter>
 			</Modal>
 
 			{/* Modal Hapus Lahan */}
 			<Modal
-				isOpen={modalHapusLahan}
-				setIsOpen={setModalHapusLahan}
+				isOpen={modalHapusCluster}
+				setIsOpen={setModalHapusCluster}
 				titleId='exampleModalLabel'
 				// isStaticBackdrop={staticBackdropStatus}
 				isScrollable={true}
@@ -577,7 +540,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 				isAnimation={false}>
 				<ModalHeader>
 					<ModalTitle id='exampleModalLabel' tag='h2' className='m-3'>
-						Hapus Lahan ?
+						Hapus Cluster ?
 					</ModalTitle>
 				</ModalHeader>
 
@@ -586,7 +549,7 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 						color='info'
 						isOutline
 						className='border-0'
-						onClick={() => setModalHapusLahan(false)}>
+						onClick={() => setModalHapusCluster(false)}>
 						Close
 					</Button>
 					<Button color='danger' icon='Delete'>
@@ -598,4 +561,4 @@ const CommonLahan: FC<IDataLahanProps> = ({ isFluid }) => {
 	);
 };
 
-export default CommonLahan;
+export default CommonCluster;
