@@ -20,6 +20,7 @@ import Alert from '@call-components/bootstrap/Alert';
 import FormGroup from '@call-components/bootstrap/forms/FormGroup';
 import Input from '@call-components/bootstrap/forms/Input';
 import Spinner from '@call-components/bootstrap/Spinner';
+import { LoginAuth, RegisterStore } from '@call-services/AuthService';
 
 interface ILoginHeaderProps {
 	isNewUser?: boolean;
@@ -28,15 +29,17 @@ const LoginHeader: FC<ILoginHeaderProps> = ({ isNewUser }) => {
 	if (isNewUser) {
 		return (
 			<>
-				<div className='text-center h1 fw-bold mt-5'>Create Account,</div>
-				<div className='text-center h4 text-muted mb-5'>Sign up to get started!</div>
+				<div className='text-center h1 fw-bold mt-5'>Silahkan Register,</div>
+				<div className='text-center h4 text-muted mb-5'>
+					Register untuk mengakses website!
+				</div>
 			</>
 		);
 	}
 	return (
 		<>
-			<div className='text-center h1 fw-bold mt-5'>Welcome,</div>
-			<div className='text-center h4 text-muted mb-5'>Sign in to continue!</div>
+			<div className='text-center h1 fw-bold mt-5'>Selamat Datang,</div>
+			<div className='text-center h4 text-muted mb-5'>Silahkan Login!</div>
 		</>
 	);
 };
@@ -53,8 +56,27 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 
 	const [signInPassword, setSignInPassword] = useState<boolean>(false);
 	const [singUpStatus, setSingUpStatus] = useState<boolean>(!!isSignUp);
+	// console.log('status : ', singUpStatus);
+
+	const [password, setPassword] = useState<string>('');
+	const [email, setEmail] = useState<string>('');
 
 	const handleOnClick = useCallback(() => router.push('/'), [router]);
+
+	const handleRegister = (e: any) => {
+		e.preventDefault();
+
+		// const formData = new FormData(e.target);
+		console.log(e);
+		formikRegister.handleSubmit(e);
+	};
+
+	const handleLogin = (e: any) => {
+		e.preventDefault();
+
+		formik.handleSubmit(e);
+
+	};
 
 	const usernameCheck = (username: string) => {
 		return !!getUserDataWithUsername(username);
@@ -67,8 +89,8 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 	const formik = useFormik({
 		enableReinitialize: true,
 		initialValues: {
-			loginUsername: USERS.JOHN.username,
-			loginPassword: USERS.JOHN.password,
+			loginUsername: '',
+			loginPassword: '',
 		},
 		validate: (values) => {
 			const errors: { loginUsername?: string; loginPassword?: string } = {};
@@ -79,23 +101,53 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 
 			if (!values.loginPassword) {
 				errors.loginPassword = 'Required';
+			} else if (values.loginPassword.length < 6) {
+				errors.loginPassword = 'Password must be at least 6 characters';
 			}
 
 			return errors;
 		},
 		validateOnChange: false,
 		onSubmit: (values) => {
-			if (usernameCheck(values.loginUsername)) {
-				if (passwordCheck(values.loginUsername, values.loginPassword)) {
-					if (setUser) {
-						setUser(values.loginUsername);
-					}
+			console.log(values);
+			// if (usernameCheck(values.loginUsername)) {
+			// 	if (passwordCheck(values.loginUsername, values.loginPassword)) {
+			// 		if (setUser) {
+			// 			setUser(values.loginUsername);
+			// 		}
 
-					handleOnClick();
-				} else {
-					formik.setFieldError('loginPassword', 'Username and password do not match.');
-				}
+			// 		// handleOnClick();
+			// 	} else {
+			// 		formik.setFieldError('loginPassword', 'Username and password do not match.');
+			// 	}
+			// }
+		},
+	});
+
+	const formikRegister = useFormik({
+		enableReinitialize: true,
+		initialValues: {
+			valueEmail: '',
+			valuePassword: '',
+		},
+		validate: (values) => {
+			const errors: { valueEmail?: string; valuePassword?: string } = {};
+			if (!values.valueEmail) {
+				errors.valueEmail = 'Required';
+			} else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.valueEmail)) {
+				errors.valueEmail = 'Invalid email address';
 			}
+			if (!values.valuePassword) {
+				errors.valuePassword = 'Required';
+			} else if (values.valuePassword.length < 6) {
+				errors.valuePassword = 'Password must be at least 6 characters';
+			}
+			return errors;
+		},
+		validateOnChange: false,
+		
+		onSubmit: (values) => {
+			console.log(values);
 		},
 	});
 
@@ -121,7 +173,7 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 			isProtected={false}
 			className={classNames({ 'bg-dark': !singUpStatus, 'bg-light': singUpStatus })}>
 			<Head>
-				<title>{singUpStatus ? 'Sign Up' : 'Login'}</title>
+				<title>{singUpStatus ? 'Register' : 'Login'}</title>
 			</Head>
 			<Page className='p-0'>
 				<div className='row h-100 align-items-center justify-content-center'>
@@ -170,7 +222,7 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 													setSignInPassword(false);
 													setSingUpStatus(!singUpStatus);
 												}}>
-												Sign Up
+												Register
 											</Button>
 										</div>
 									</div>
@@ -178,60 +230,77 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 
 								<LoginHeader isNewUser={singUpStatus} />
 
-								<Alert isLight icon='Lock' isDismissible>
+								{/* <Alert isLight icon='Lock' isDismissible>
 									<div className='row'>
 										<div className='col-12'>
-											<strong>Username:</strong> {USERS.JOHN.username}
+											<strong>Email:</strong> nama@gmail.com
 										</div>
 										<div className='col-12'>
-											<strong>Password:</strong> {USERS.JOHN.password}
+											<strong>Password:</strong> ********
 										</div>
 									</div>
-								</Alert>
-								<form className='row g-4'>
+								</Alert> */}
+
+								<form
+									onSubmit={singUpStatus ? handleRegister : handleLogin}
+									className='row g-4'>
 									{singUpStatus ? (
 										<>
 											<div className='col-12'>
 												<FormGroup
 													id='signup-email'
-													isFloating
 													label='Your email'>
-													<Input type='email' autoComplete='email' />
+													<Input
+														type='email'
+														value={formikRegister.values.valueEmail}
+														onChange={formikRegister.handleChange}
+														isTouched={formikRegister.touched.valueEmail}
+														invalidFeedback={formikRegister.errors.valueEmail}
+														onBlur={formikRegister.handleBlur}
+														name='valueEmail'
+														autoComplete='email'
+													/>
 												</FormGroup>
 											</div>
-											<div className='col-12'>
+											{/* <div className='col-12'>
 												<FormGroup
 													id='signup-name'
 													isFloating
 													label='Your name'>
 													<Input autoComplete='given-name' />
 												</FormGroup>
-											</div>
-											<div className='col-12'>
+											</div> */}
+											{/* <div className='col-12'>
 												<FormGroup
 													id='signup-surname'
 													isFloating
 													label='Your surname'>
 													<Input autoComplete='family-name' />
 												</FormGroup>
-											</div>
+											</div> */}
 											<div className='col-12'>
 												<FormGroup
 													id='signup-password'
-													isFloating
+													
 													label='Password'>
 													<Input
+														value={formikRegister.values.valuePassword}
+														onChange={formikRegister.handleChange}
+														isTouched={formikRegister.touched.valuePassword}
+														invalidFeedback={formikRegister.errors.valuePassword}
+														onBlur={formikRegister.handleBlur}
 														type='password'
+														name='valuePassword'
 														autoComplete='password'
 													/>
 												</FormGroup>
 											</div>
 											<div className='col-12'>
 												<Button
+													type='submit'
 													color='info'
-													className='w-100 py-3'
-													onClick={handleOnClick}>
-													Sign Up
+													className='w-100 py-3'>
+													Register
 												</Button>
 											</div>
 										</>
@@ -240,13 +309,13 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 											<div className='col-12'>
 												<FormGroup
 													id='loginUsername'
-													isFloating
-													label='Your email or username'
+													label='Your email'
 													className={classNames({
 														'd-none': signInPassword,
 													})}>
 													<Input
 														autoComplete='username'
+														type='email'
 														value={formik.values.loginUsername}
 														isTouched={formik.touched.loginUsername}
 														invalidFeedback={
@@ -267,10 +336,10 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 												)}
 												<FormGroup
 													id='loginPassword'
-													isFloating
 													label='Password'
 													className={classNames({
-														'd-none': !signInPassword,
+														'd-none': signInPassword,
+														
 													})}>
 													<Input
 														type='password'
@@ -292,60 +361,27 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 													<Button
 														color='warning'
 														className='w-100 py-3'
-														isDisable={!formik.values.loginUsername}
-														onClick={handleContinue}>
+														// isDisable={!formik.values.loginUsername}
+														// onClick={handleContinue}
+														type='submit'>
 														{isLoading && (
 															<Spinner isSmall inButton isGrow />
 														)}
-														Continue
+														Login
 													</Button>
 												) : (
 													<Button
 														color='warning'
 														className='w-100 py-3'
-														onClick={formik.handleSubmit}>
+														type='submit'
+														// onClick={formik.handleSubmit}
+													>
 														Login
 													</Button>
 												)}
 											</div>
 										</>
 									)}
-
-									{/* BEGIN :: Social Login */}
-									{!signInPassword && (
-										<>
-											<div className='col-12 mt-3 text-center text-muted'>
-												OR
-											</div>
-											<div className='col-12 mt-3'>
-												<Button
-													isOutline
-													color={darkModeStatus ? 'light' : 'dark'}
-													className={classNames('w-100 py-3', {
-														'border-light': !darkModeStatus,
-														'border-dark': darkModeStatus,
-													})}
-													icon='CustomApple'
-													onClick={handleOnClick}>
-													Sign in with Apple
-												</Button>
-											</div>
-											<div className='col-12'>
-												<Button
-													isOutline
-													color={darkModeStatus ? 'light' : 'dark'}
-													className={classNames('w-100 py-3', {
-														'border-light': !darkModeStatus,
-														'border-dark': darkModeStatus,
-													})}
-													icon='CustomGoogle'
-													onClick={handleOnClick}>
-													Continue with Google
-												</Button>
-											</div>
-										</>
-									)}
-									{/* END :: Social Login */}
 								</form>
 							</CardBody>
 						</Card>

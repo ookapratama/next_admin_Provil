@@ -63,6 +63,9 @@
       "@call-admin/*": [
         "pages/admin/*"
       ],
+      "@call-services/*": [
+        "services/*"
+      ],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
