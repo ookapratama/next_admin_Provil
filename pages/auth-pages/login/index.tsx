@@ -20,7 +20,10 @@ import Alert from '@call-components/bootstrap/Alert';
 import FormGroup from '@call-components/bootstrap/forms/FormGroup';
 import Input from '@call-components/bootstrap/forms/Input';
 import Spinner from '@call-components/bootstrap/Spinner';
-import { LoginAuth, RegisterStore } from '@call-services/AuthService';
+import { LoginAuth, RegisterStore } from '@call-root-lib/services/AuthServices/AuthService';
+import { useRegister } from '@call-root-lib/services/AuthServices/AuthMutation';
+import Toasts from '@call-components/bootstrap/Toasts';
+import { toast } from 'react-toastify';
 
 interface ILoginHeaderProps {
 	isNewUser?: boolean;
@@ -58,11 +61,6 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 	const [singUpStatus, setSingUpStatus] = useState<boolean>(!!isSignUp);
 	// console.log('status : ', singUpStatus);
 
-	const [password, setPassword] = useState<string>('');
-	const [email, setEmail] = useState<string>('');
-
-	const handleOnClick = useCallback(() => router.push('/'), [router]);
-
 	const handleRegister = (e: any) => {
 		e.preventDefault();
 
@@ -75,7 +73,6 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 		e.preventDefault();
 
 		formik.handleSubmit(e);
-
 	};
 
 	const usernameCheck = (username: string) => {
@@ -129,9 +126,16 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 		initialValues: {
 			valueEmail: '',
 			valuePassword: '',
+			valuePhoneNumber: '',
+			valueName: '',
 		},
 		validate: (values) => {
-			const errors: { valueEmail?: string; valuePassword?: string } = {};
+			const errors: {
+				valueEmail?: string;
+				valuePassword?: string;
+				valueName?: string;
+				valuePhoneNumber?: string;
+			} = {};
 			if (!values.valueEmail) {
 				errors.valueEmail = 'Required';
 			} else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.valueEmail)) {
@@ -140,14 +144,33 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 			if (!values.valuePassword) {
 				errors.valuePassword = 'Required';
 			} else if (values.valuePassword.length < 6) {
-				errors.valuePassword = 'Password must be at least 6 characters';
+				errors.valuePassword = 'Password minimal 6 characters';
+			}
+			if (!values.valueName) {
+				errors.valueName = 'Required';
+			}
+			if (!values.valuePhoneNumber) {
+				errors.valuePhoneNumber = 'Required';
+			} else if (values.valuePhoneNumber.length < 10) {
+				errors.valuePhoneNumber = 'No HP minimal 10 characters';
+			} else if (values.valuePhoneNumber.length > 16) {
+				errors.valuePhoneNumber = 'No HP maksimal 16 characters';
 			}
 			return errors;
 		},
 		validateOnChange: false,
-		
-		onSubmit: (values) => {
+
+		onSubmit: async (values, { resetForm }) => {
 			console.log(values);
+			await RegisterStore(values);
+			resetForm();
+			setSingUpStatus(!singUpStatus);
+			() =>
+				toast(
+					<Toasts icon='AddBox' iconColor='primary' title='Sukses Registrasi' time='Now'>
+						Berhasil Registrasi, Silahkan login menggukan akun anda
+					</Toasts>,
+				);
 		},
 	});
 
@@ -247,50 +270,78 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 									{singUpStatus ? (
 										<>
 											<div className='col-12'>
-												<FormGroup
-													id='signup-email'
-													label='Your email'>
+												<FormGroup id='signup-name' label='Nama Lengkap'>
+													<Input
+														autoComplete='given-name'
+														name='valueName'
+														placeholder='Masukkan nama lengkap'
+														value={formikRegister.values.valueName}
+														onChange={formikRegister.handleChange}
+														isTouched={formikRegister.touched.valueName}
+														invalidFeedback={
+															formikRegister.errors.valueName
+														}
+														onBlur={formikRegister.handleBlur}
+													/>
+												</FormGroup>
+											</div>
+											<div className='col-12'>
+												<FormGroup id='signup-email' label='Your email'>
 													<Input
 														type='email'
+														placeholder='Masukkan email'
 														value={formikRegister.values.valueEmail}
 														onChange={formikRegister.handleChange}
-														isTouched={formikRegister.touched.valueEmail}
-														invalidFeedback={formikRegister.errors.valueEmail}
+														isTouched={
+															formikRegister.touched.valueEmail
+														}
+														invalidFeedback={
+															formikRegister.errors.valueEmail
+														}
 														onBlur={formikRegister.handleBlur}
 														name='valueEmail'
 														autoComplete='email'
 													/>
 												</FormGroup>
 											</div>
-											{/* <div className='col-12'>
-												<FormGroup
-													id='signup-name'
-													isFloating
-													label='Your name'>
-													<Input autoComplete='given-name' />
-												</FormGroup>
-											</div> */}
-											{/* <div className='col-12'>
-												<FormGroup
-													id='signup-surname'
-													isFloating
-													label='Your surname'>
-													<Input autoComplete='family-name' />
-												</FormGroup>
-											</div> */}
+
 											<div className='col-12'>
-												<FormGroup
-													id='signup-password'
-													
-													label='Password'>
+												<FormGroup id='signup-surname' label='No. HP'>
+													<Input
+														id='examplePrice'
+														placeholder='Format +62'
+														// @ts-ignore
+														value={
+															formikRegister.values.valuePhoneNumber
+														}
+														onChange={formikRegister.handleChange}
+														isTouched={
+															formikRegister.touched.valuePhoneNumber
+														}
+														invalidFeedback={
+															formikRegister.errors.valuePhoneNumber
+														}
+														onBlur={formikRegister.handleBlur}
+														type='text'
+														name='valuePhoneNumber'
+													/>
+												</FormGroup>
+											</div>
+											<div className='col-12'>
+												<FormGroup id='signup-password' label='Password'>
 													<Input
 														value={formikRegister.values.valuePassword}
 														onChange={formikRegister.handleChange}
-														isTouched={formikRegister.touched.valuePassword}
-														invalidFeedback={formikRegister.errors.valuePassword}
+														isTouched={
+															formikRegister.touched.valuePassword
+														}
+														invalidFeedback={
+															formikRegister.errors.valuePassword
+														}
 														onBlur={formikRegister.handleBlur}
 														type='password'
 														name='valuePassword'
+														placeholder='Masukkan password'
 														autoComplete='password'
 													/>
 												</FormGroup>
@@ -314,7 +365,8 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 														'd-none': signInPassword,
 													})}>
 													<Input
-														autoComplete='username'
+														autoComplete='email'
+														placeholder='Masukkan email'
 														type='email'
 														value={formik.values.loginUsername}
 														isTouched={formik.touched.loginUsername}
@@ -337,12 +389,10 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 												<FormGroup
 													id='loginPassword'
 													label='Password'
-													className={classNames({
-														'd-none': signInPassword,
-														
-													})}>
+													className={'mt-3'}>
 													<Input
 														type='password'
+														placeholder='Masukkan password'
 														autoComplete='current-password'
 														value={formik.values.loginPassword}
 														isTouched={formik.touched.loginPassword}
@@ -360,7 +410,7 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 												{!signInPassword ? (
 													<Button
 														color='warning'
-														className='w-100 py-3'
+														className='w-100 py-3 '
 														// isDisable={!formik.values.loginUsername}
 														// onClick={handleContinue}
 														type='submit'>
