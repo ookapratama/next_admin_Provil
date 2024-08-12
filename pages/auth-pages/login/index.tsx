@@ -21,9 +21,10 @@ import FormGroup from '@call-components/bootstrap/forms/FormGroup';
 import Input from '@call-components/bootstrap/forms/Input';
 import Spinner from '@call-components/bootstrap/Spinner';
 import { LoginAuth, RegisterStore } from '@call-root-lib/services/AuthServices/AuthService';
-import { useRegister } from '@call-root-lib/services/AuthServices/AuthMutation';
 import Toasts from '@call-components/bootstrap/Toasts';
 import { toast } from 'react-toastify';
+import withReactContent from 'sweetalert2-react-content'
+import Swal from 'sweetalert2'
 
 interface ILoginHeaderProps {
 	isNewUser?: boolean;
@@ -46,6 +47,28 @@ const LoginHeader: FC<ILoginHeaderProps> = ({ isNewUser }) => {
 		</>
 	);
 };
+
+interface IAlertProps {
+	isRegister?: boolean;
+	email? : string;
+}
+
+const AlertRegister = ({ isRegister, email }: IAlertProps) => {
+	const alertOptions = {
+		icon: isRegister ? 'success' : 'error',
+		title: isRegister ? 'Sukses Registrasi' : 'Gagal Registrasi',
+		message: isRegister ? `Silahkan login menggunakan akun anda : ${email}` : 'Email sudah terdaftar',
+	};
+
+	withReactContent(Swal).fire({
+		icon: alertOptions.icon,
+		title: alertOptions.title,
+		text: alertOptions.message,
+	})
+
+
+};
+
 
 interface ILoginProps {
 	isSignUp?: boolean;
@@ -161,16 +184,18 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 		validateOnChange: false,
 
 		onSubmit: async (values, { resetForm }) => {
-			console.log(values);
-			await RegisterStore(values);
-			resetForm();
-			setSingUpStatus(!singUpStatus);
-			() =>
-				toast(
-					<Toasts icon='AddBox' iconColor='primary' title='Sukses Registrasi' time='Now'>
-						Berhasil Registrasi, Silahkan login menggukan akun anda
-					</Toasts>,
-				);
+			setIsLoading(true)
+			const isRegis = await RegisterStore(values);
+			if (isRegis?.status === 200) {
+				resetForm();
+				setSingUpStatus(!singUpStatus);
+				AlertRegister({ isRegister: true,  email: values.valueEmail });
+				setIsLoading(false)
+			} else {
+				setSingUpStatus(singUpStatus);
+				AlertRegister({ isRegister: false });
+				setIsLoading(false)
+			}
 		},
 	});
 
@@ -350,7 +375,11 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 												<Button
 													type='submit'
 													color='info'
-													className='w-100 py-3'>
+													className='w-100 py-3'
+												>
+													{isLoading && (
+														<Spinner isSmall inButton isGrow />
+													)}
 													Register
 												</Button>
 											</div>
@@ -424,7 +453,7 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 														color='warning'
 														className='w-100 py-3'
 														type='submit'
-														// onClick={formik.handleSubmit}
+													// onClick={formik.handleSubmit}
 													>
 														Login
 													</Button>
