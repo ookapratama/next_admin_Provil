@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
@@ -12,6 +12,10 @@ import useNavigationItemHandle from '../../hooks/useNavigationItemHandle';
 import AuthContext from '../../context/authContext';
 
 import ThemeContext from '../../context/themeContext';
+import { GetTokenLogin, LogoutUser } from '@call-root-lib/services/AuthServices/AuthService';
+import withReactContent from 'sweetalert2-react-content';
+import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
 
 const User = () => {
 	const { width } = useWindowSize();
@@ -25,7 +29,12 @@ const User = () => {
 
 	const [collapseStatus, setCollapseStatus] = useState<boolean>(false);
 
+	const { token, loadToken, clearToken } = GetTokenLogin();
 	const { t } = useTranslation(['translation', 'menu']);
+
+	useEffect(() => {
+		loadToken();
+	}, [loadToken])
 
 	return (
 		<>
@@ -96,14 +105,32 @@ const User = () => {
 						<div
 							role='presentation'
 							className='navigation-item cursor-pointer'
-							onClick={() => {
+							onClick={async () => {
 								if (setUser) {
 									setUser('');
 								}
 								if (width < Number(process.env.REACT_APP_MOBILE_BREAKPOINT_SIZE)) {
 									setAsideStatus(false);
 								}
-								router.push(`/${demoPagesMenu.login.path}`);
+								const data = { session_id: token };
+								console.log(token);
+								// console.log(data);
+								const isLogout = await LogoutUser(token);
+								if (token !== null) {
+									withReactContent(Swal).fire({
+										icon: 'success',
+										title: 'Berhasil Logout',
+										text: 'Semoga hari mu menyenangkan',
+									}).then( () => {
+										Cookies.remove('token')
+										clearToken();
+										console.log(isLogout);
+									})
+									router.push(`/${demoPagesMenu.login.path}`);
+								}
+								else {
+									router.push(`/${demoPagesMenu.login.path}`);
+								}
 							}}>
 							<span className='navigation-link navigation-link-pill'>
 								<span className='navigation-link-info'>

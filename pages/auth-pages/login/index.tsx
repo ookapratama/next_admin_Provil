@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
@@ -20,11 +20,12 @@ import Alert from '@call-components/bootstrap/Alert';
 import FormGroup from '@call-components/bootstrap/forms/FormGroup';
 import Input from '@call-components/bootstrap/forms/Input';
 import Spinner from '@call-components/bootstrap/Spinner';
-import { LoginAuth, RegisterStore } from '@call-root-lib/services/AuthServices/AuthService';
+import { GetTokenLogin, LoginAuth, RegisterStore } from '@call-root-lib/services/AuthServices/AuthService';
 import Toasts from '@call-components/bootstrap/Toasts';
 import { toast } from 'react-toastify';
 import withReactContent from 'sweetalert2-react-content'
 import Swal from 'sweetalert2'
+import Cookies from 'js-cookie';
 
 interface ILoginHeaderProps {
 	isNewUser?: boolean;
@@ -48,16 +49,39 @@ const LoginHeader: FC<ILoginHeaderProps> = ({ isNewUser }) => {
 	);
 };
 
-interface IAlertProps {
+// alert register
+interface IAlertRegisterProps {
 	isRegister?: boolean;
-	email? : string;
+	email?: string;
 }
 
-const AlertRegister = ({ isRegister, email }: IAlertProps) => {
+const AlertRegister = ({ isRegister, email }: IAlertRegisterProps) => {
 	const alertOptions = {
 		icon: isRegister ? 'success' : 'error',
 		title: isRegister ? 'Sukses Registrasi' : 'Gagal Registrasi',
 		message: isRegister ? `Silahkan login menggunakan akun anda : ${email}` : 'Email sudah terdaftar',
+	};
+
+	withReactContent(Swal).fire({
+		icon: alertOptions.icon,
+		title: alertOptions.title,
+		text: alertOptions.message,
+	})
+
+
+};
+
+// alert login
+interface IAlertLoginProps {
+	isRegister?: boolean;
+	name?: string;
+}
+
+const AlertLogin = ({ isRegister, name }: IAlertLoginProps) => {
+	const alertOptions = {
+		icon: isRegister ? 'success' : 'error',
+		title: isRegister ? 'Sukses Login' : 'Gagal Login',
+		message: isRegister ? `Selamat datang, ${name}` : 'Periksa kembali email dan password anda',
 	};
 
 	withReactContent(Swal).fire({
@@ -76,36 +100,30 @@ interface ILoginProps {
 const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 	const router = useRouter();
 
-	const { setUser } = useContext(AuthContext);
-
 	const { darkModeStatus } = useDarkMode();
 
 	const [signInPassword, setSignInPassword] = useState<boolean>(false);
 	const [singUpStatus, setSingUpStatus] = useState<boolean>(!!isSignUp);
-	// console.log('status : ', singUpStatus);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+
+	// get Token
+	const { token, setToken } = GetTokenLogin();
+	console.log('token : ', token);
 
 	const handleRegister = (e: any) => {
 		e.preventDefault();
-
-		// const formData = new FormData(e.target);
-		console.log(e);
 		formikRegister.handleSubmit(e);
 	};
 
+	// const navigate = useNavigate();
+	// const handleOnClick = useCallback(() => navigate("/"), [navigate]);
 	const handleLogin = (e: any) => {
 		e.preventDefault();
-
 		formik.handleSubmit(e);
 	};
 
-	const usernameCheck = (username: string) => {
-		return !!getUserDataWithUsername(username);
-	};
 
-	const passwordCheck = (username: string, password: string) => {
-		return getUserDataWithUsername(username).password === password;
-	};
-
+	// handle form Login
 	const formik = useFormik({
 		enableReinitialize: true,
 		initialValues: {
@@ -117,33 +135,42 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 
 			if (!values.loginUsername) {
 				errors.loginUsername = 'Required';
+			} else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.loginUsername)) {
+				errors.loginUsername = 'Invalid email address';
 			}
 
 			if (!values.loginPassword) {
 				errors.loginPassword = 'Required';
 			} else if (values.loginPassword.length < 6) {
-				errors.loginPassword = 'Password must be at least 6 characters';
+				errors.loginPassword = 'Password minimal 6 characters';
 			}
 
 			return errors;
 		},
 		validateOnChange: false,
-		onSubmit: (values) => {
-			console.log(values);
-			// if (usernameCheck(values.loginUsername)) {
-			// 	if (passwordCheck(values.loginUsername, values.loginPassword)) {
-			// 		if (setUser) {
-			// 			setUser(values.loginUsername);
-			// 		}
-
-			// 		// handleOnClick();
-			// 	} else {
-			// 		formik.setFieldError('loginPassword', 'Username and password do not match.');
-			// 	}
-			// }
+		onSubmit: async (values, { resetForm }) => {
+			setIsLoading(true)
+			const isLogin = await LoginAuth(values);
+			if (isLogin?.status === 200) {
+				// resetForm();
+				try {
+					const token = isLogin.data.data.accessToken;
+					setToken(token);
+					Cookies.set('token', token)
+					AlertLogin({ isRegister: true, name: values.loginUsername });
+					router.push('/')
+				} catch (error) {	
+					console.log(error);
+				}
+				setIsLoading(false)
+			} else {
+				AlertLogin({ isRegister: false });
+				setIsLoading(false)
+			}
 		},
 	});
 
+	// handle form register
 	const formikRegister = useFormik({
 		enableReinitialize: true,
 		initialValues: {
@@ -186,10 +213,11 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 		onSubmit: async (values, { resetForm }) => {
 			setIsLoading(true)
 			const isRegis = await RegisterStore(values);
+			formik.resetForm();
 			if (isRegis?.status === 200) {
 				resetForm();
 				setSingUpStatus(!singUpStatus);
-				AlertRegister({ isRegister: true,  email: values.valueEmail });
+				AlertRegister({ isRegister: true, email: values.valueEmail });
 				setIsLoading(false)
 			} else {
 				setSingUpStatus(singUpStatus);
@@ -199,7 +227,7 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 		},
 	});
 
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+
 	const handleContinue = () => {
 		setIsLoading(true);
 		setTimeout(() => {
@@ -254,6 +282,7 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 												className='rounded-1 w-100'
 												size='lg'
 												onClick={() => {
+													formikRegister.resetForm();
 													setSignInPassword(false);
 													setSingUpStatus(!singUpStatus);
 												}}>
@@ -267,6 +296,7 @@ const Login: NextPage<ILoginProps> = ({ isSignUp }) => {
 												className='rounded-1 w-100'
 												size='lg'
 												onClick={() => {
+													formik.resetForm();
 													setSignInPassword(false);
 													setSingUpStatus(!singUpStatus);
 												}}>

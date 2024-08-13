@@ -28,6 +28,8 @@ import CommonDashboardSalesByStore from '@call-common/partial/CommonDashboardSal
 import CommonDashboardWaitingAnswer from '@call-common/partial/CommonDashboardWaitingAnswer';
 import CommonDashboardTopSeller from '@call-common/partial/CommonDashboardTopSeller';
 import CommonMyWallet from '@call-common/partial/CommonMyWallet';
+import Cookies from 'js-cookie';
+import { GetTokenLogin } from '@call-root-lib/services/AuthServices/AuthService';
 
 const Index: NextPage = () => {
 	const { mobileDesign } = useContext(ThemeContext);
@@ -46,13 +48,20 @@ const Index: NextPage = () => {
 				localStorage.setItem('tourModalStarted', 'shown');
 			}, 3000);
 		}
-		return () => {};
+		return () => { };
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const { themeStatus } = useDarkMode();
 
 	const [activeTab, setActiveTab] = useState<TTabs>(TABS.YEARLY);
+
+	// get Token
+	const { token, loadToken } = GetTokenLogin();
+	console.log(token);
+	useEffect(() => {
+		loadToken();
+	}, [loadToken])
 
 	return (
 		<PageWrapper>
